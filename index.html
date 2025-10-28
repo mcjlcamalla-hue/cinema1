@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cinema Ticketing</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+    /* Update these background-related styles */
+    body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        background: #000;
+        position: relative;
+        overflow-x: hidden;
+    }
+
+    .bg-slider {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        z-index: 0;
+        overflow: hidden;
+    }
+
+    .bg-slide {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        opacity: 0;
+        transition: opacity 1s ease-in-out;
+        animation: zoom 20s infinite;
+    }
+
+    /* Make sure the main content is above the background */
+    #app {
+        position: relative;
+        z-index: 1;
+        max-width: 1100px;
+        margin: 40px auto;
+        background: rgba(35, 36, 58, 0.95);
+        backdrop-filter: blur(8px);
+        padding: 32px;
+        border-radius: 18px;
+        box-shadow: 0 0 32px rgba(0, 0, 0, 0.6);
+    }
+
+    /* Ensure proper stacking context */
+    .topbar {
+        position: relative;
+        z-index: 2;
+    }
+
+    /* existing styles... */
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #f1c40f;
+        text-shadow: 1px 1px 2px black;
+    }
+    label {
+        display: block;
+        margin-top: 10px;
+        font-size: 14px;
+    }
+    input, select {
+        width: 100%;
+        padding: 12px;
+        margin-top: 5px;
+        border-radius: 8px;
+        border: 1px solid #35355e;
+        background: #23243a;
+        color: #f5f6fa;
+        margin-bottom: 16px;
+        outline: none;
+    }
+    button {
+        width: 100%;
+        margin-top: 15px;
+        padding: 12px 32px;
+        background: #f1c40f;
+        color: #23243a;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        font-size: 18px;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    button:hover {
+        background: #ffe066;
+    }
+    nav {
+        display: flex;
+        justify-content: center;
+        gap: 18px;
+        margin-bottom: 32px;
+    }
+    nav button {
+        background: #35355e;
+        color: #f5f6fa;
+        font-size: 16px;
+        padding: 12px 32px;
+        border-radius: 8px;
+        border: none;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    nav button.active, nav button:hover {
+        background: #f1c40f;
+        color: #23243a;
+    }
+    .msg {
+        color: #e74c3c;
+        font-size: 16px;
+        margin-top: 8px;
+    }
+    .social {
+        text-align: center;
+        margin-top: 15px;
+    }
+    .social a {
+        display: inline-block;
+        margin: 5px;
+        padding: 10px 15px;
+        background: #333;
+        color:white;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 14px;
+        pointer-events: none; /* disables social links for demo */
+        opacity: 0.6;
+    }
+    .social a:hover {
+        background: #555;
+    }
+    section {
+        margin-top: 20px;
+    }
+    .hidden {
+        display: none !important;
+    }
+    #movies-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+        align-items: stretch;
+        margin: 0 auto;
+        width: 100%;
+        max-width: 900px;
+    }
+    #movies-panel::before {
+        content: "🎬 Movie Listings Coming Soon...";
+        display: block;
+        text-align: center;
+        font-size: 18px;
+        padding: 20px;
+        color: #ccc;
+    }
+    #book-panel::before {
+        content: "🎟️ Book Your Tickets Here...";
+        display: block;
+        text-align: center;
+        font-size: 18px;
+        padding: 20px;
+        color: #ccc;
+    }
+    #food-panel::before {
+        content: "🍿 Select Your Snacks...";
+        display: block;
+        text-align: center;
+        font-size: 18px;
+        padding: 20px;
+        color: #ccc;
+    }
+    #payment-panel::before {
+        content: "💳 Secure Payment Section...";
+        display: block;
+        text-align: center;
+        font-size: 18px;
+        padding: 20px;
+        color: #ccc;
+    }
+    .movie-card {
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+        margin: 0;
+        padding: 32px;
+        display: flex;
+        gap: 32px;
+        align-items: flex-start;
+        width: 100%;
+        min-width: 0;
+        border: 2px solid #3498db;
+    }
+    .movie-card img {
+        width: 160px;
+        height: 220px;
+        object-fit: cover;
+        border-radius: 10px;
+        box-shadow: 0 0 8px #181824;
+        flex-shrink: 0;
+    }
+    .movie-card-content {
+        flex: 1;
+        min-width: 0;
+    }
+    .movie-card h2 {
+        color: #f1c40f;
+        margin-bottom: 12px;
+        font-size: 2rem;
+    }
+    .movie-card p {
+        color: #c33764;
+        font-size: 18px;
+        margin-bottom: 18px;
+    }
+    .movie-card ul {
+        color: #23243a;
+        font-size: 16px;
+        margin-bottom: 18px;
+    }
+    .movie-card button {
+        width: 100%;
+        margin-top: 18px;
+        padding: 14px 0;
+        font-size: 18px;
+        background: #f1c40f;
+        color: #23243a;
+        border-radius: 8px;
+        border: none;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+.movie-card button:hover {
+        background: #ffe066;
+    }
+
+    /* mobile / hamburger styles */
+.topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:8px 12px;
+    margin-bottom:12px;
+    color:#fff;
+}
+.brand{
+    font-weight:700;
+    color:#f1c40f;
+    font-size:18px;
+}
+.hamburger{
+    display:none;
+    background:transparent;
+    border:0;
+    padding:6px;
+    cursor:pointer;
+}
+.hamburger span{
+    display:block;
+    width:22px;
+    height:3px;
+    background:#fff;
+    margin:4px 0;
+    border-radius:2px;
+    transition:transform .2s, opacity .2s;
+}
+
+/* small devices: show hamburger and make nav a slide-down */
+@media (max-width:800px) {
+    .hamburger{display:block}
+    nav{display:none; position:fixed; top:0; left:0; right:0; padding:16px; background:rgba(35,36,58,0.98); z-index:1000; flex-direction:column; align-items:stretch; gap:8px; box-shadow:0 8px 24px rgba(0,0,0,.4)}
+    nav.open{display:flex}
+    nav button{width:100%; margin:6px 0; padding:12px; background:#35355e; color:#f5f6fa; border-radius:8px; text-align:left}
+    #app{padding:12px}
+    .movie-card{padding:12px}
+}
+
+/* when nav open, dim page (optional) */
+.nav-backdrop{
+    display:none;
+    position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:900;
+}
+.nav-backdrop.show{display:block}
+    /* Responsive for mobile */
+    @media (max-width: 800px) {
+        #app {
+            max-width: 100vw;
+            padding: 8px;
+        }
+        #movies-panel {
+            max-width: 100vw;
+            padding: 0;
+        }
+        .movie-card {
+            flex-direction: column;
+            align-items: center;
+            padding: 16px;
+        }
+        .movie-card img {
+            width: 120px;
+            height: 160px;
+            margin-bottom: 12px;
+        }
+        .movie-card-content {
+            width: 100%;
+        }
+    }
+
+
+    @keyframes zoom {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .active-slide {
+            opacity: 1;
+        }
+</style>
+</head>
+<body>
+    <div class="bg-slider">
+        <div class="bg-slide" style="background-image: url('images/bg1.jpg')"></div>
+        <div class="bg-slide" style="background-image: url('images/bg2.jpg')"></div>
+        <div class="bg-slide" style="background-image: url('images/bg3.jpg')"></div>
+        <div class="bg-slide" style="background-image: url('images/bg4.jpg')"></div>
+    </div>
+<div id="app">
+    <!-- Top bar with title and hamburger for mobile -->
+    <header class="topbar">
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu" onclick="toggleNav()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <div class="brand">Cinema Booking</div>
+    </header>
+
+    <!-- Navigation -->
+    <nav id="nav" class="hidden">
+        <button onclick="showPanel('movies')">View Movies</button>
+        <button onclick="showPanel('book')">Book Ticket</button>
+        <button onclick="showPanel('food')">Food Selection</button>
+        <button onclick="showPanel('payment')">Payment</button>
+        <button onclick="showPanel('history')">Booking History</button>
+        <button onclick="logout()">Logout</button>
+    </nav>
+
+   <!-- Login Panel -->
+<section id="login-panel">
+    <h2>Cinema Login</h2>
+    <form id="login-form" method="POST" action="login.php" autocomplete="off">
+        <input type="text" id="login-username" name="username" placeholder="Username" autocomplete="off" required>
+        <input type="password" id="login-password" name="password" placeholder="Password" required autocomplete="new-password">
+        <button type="submit" id="login-btn">Login</button>
+        <div id="login-msg" class="msg"></div>
+    </form>
+
+    <!-- 👇 Admin Login button with same size/style -->
+    <form action="admin_login.php" method="get">
+        <button type="submit">Admin Login</button>
+    </form>
+
+    <p>Don't have an account? <button type="button" onclick="showPanel('register')">Create Account</button></p>
+    <p>or Connect with Social Media</p>
+    <div class="social buttons">
+        <a href="#" class="fa fa-google"> Google</a>
+        <a href="#" class="fa fa-facebook"> Facebook</a>
+        <a href="#" class="fa fa-instagram"> Instagram</a>
+    </div>
+    <a href="#" onclick="alert('Password reset coming soon!')">Forgot Password?</a>
+</section>
+
+
+    <!-- Register Panel -->
+    <section id="register-panel" class="hidden">
+        <h2>Create Account</h2>
+        <form id="register-form" autocomplete="on">
+            <label for="register-username">Username</label>
+            <input id="register-username" name="username" placeholder="Username" required autocomplete="username">
+            <label for="register-email">Email</label>
+            <input id="register-email" name="email" type="email" placeholder="Enter your email" required autocomplete="email">
+            <label for="register-password">Password</label>
+            <input id="register-password" name="password" type="password" placeholder="Password" required autocomplete="new-password">
+            <label for="register-confirm">Confirm Password</label>
+            <input id="register-confirm" name="confirm_password" type="password" placeholder="Confirm Password" required autocomplete="new-password">
+            <label for="gender">Gender:</label>
+            <select name="gender" id="gender" required>
+                <option value="Select gender">Select gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Others">Others</option>
+                <option value="Prefer not to say">Prefer not to say</option>
+            </select>
+            <div id="register-msg" class="msg"></div>
+            <button type="submit" id="register-btn">Register</button>
+        </form>
+        <button type="button" onclick="showPanel('login')">Back to Login</button>
+    </section>
+
+    <!-- Other Panels -->
+    <section id="movies-panel" class="hidden">
+        <input type="text" id="movie-search" placeholder="Search movies...">
+        <div class="movie-card">
+            <img src="..." alt="Movie Poster">
+            <div class="movie-card-content">
+                <h2>Movie Title</h2>
+                <p>Movie description...</p>
+                <ul>
+                    <li>Available Seats...</li>
+                </ul>
+                <button>Book</button>
+            </div>
+        </div>
+    </section>
+    <section id="book-panel" class="hidden">
+    </section>
+    <section id="food-panel" class="hidden"></section>
+    <section id="payment-panel" class="hidden">
+        <h2>Payment</h2>
+
+        <form id="payment-form" method="POST" action="process_payment.php" enctype="multipart/form-data">
+            <label>
+                <input type="checkbox" id="student-discount-checkbox" name="student_discount" value="1">
+                Apply Student Discount (20% off)
+            </label>
+
+            <div id="student-upload-section" class="hidden" style="margin-top:12px;">
+                <label for="student-id-upload">Upload Student ID (jpg/png)</label>
+                <input type="file" id="student-id-upload" name="student_id" accept="image/*">
+                <div id="student-upload-preview" style="margin-top:8px;"></div>
+            </div>
+
+            <label for="pay-name">Name</label>
+            <input id="pay-name" name="name" placeholder="Full name" required>
+
+            <label for="pay-amount">Amount</label>
+            <input id="pay-amount" name="amount" type="number" step="0.01" placeholder="0.00" required>
+
+            <!-- hidden booking info; set these values when user books -->
+            <input type="hidden" id="pay-movie-id" name="movie_id" value="">
+            <input type="hidden" id="pay-showtime" name="showtime" value="">
+            <input type="hidden" id="pay-seat" name="seat" value="">
+
+            <button type="submit">Pay & Generate Ticket</button>
+            <div id="payment-msg" class="msg"></div>
+        </form>
+    </section>
+    <section id="history-panel" class="hidden"></section>
+    <section id="profile-panel" class="hidden"></section>
+    <section id="history-panel" class="hidden"></section>
+    <section id="profile-panel" class="hidden"></section>
+</div>
+<script>
+function toggleNav() {
+    const nav = document.getElementById('nav');
+    nav.classList.toggle('open');
+    document.querySelector('.nav-backdrop')?.classList.toggle('show');
+}
+function closeNav() {
+    const nav = document.getElementById('nav');
+    nav.classList.remove('open');
+    document.querySelector('.nav-backdrop')?.classList.remove('show');
+}
+
+// update showPanel to close mobile nav when switching panels
+function showPanel(panel) {
+    // Hide all panels
+    document.querySelectorAll('#app > section').forEach(sec => sec.classList.add('hidden'));
+    // Show the requested panel
+    const activePanel = document.getElementById(panel + '-panel');
+    if (activePanel) activePanel.classList.remove('hidden');
+    // Hide nav for login/register, show for others
+    const nav = document.getElementById('nav');
+    if (panel === 'login' || panel === 'register') {
+        nav.classList.add('hidden');
+    } else {
+        nav.classList.remove('hidden');
+    }
+}
+
+// FIXED: clear login inputs on page load
+window.onload = function() {
+    document.getElementById("login-username").value = "";
+    document.getElementById("login-password").value = "";
+    showPanel('login');
+};
+
+function resetLoginForm() {
+    const loginForm = document.getElementById("login-form");
+    if (loginForm) {
+        loginForm.reset(); // clears all fields
+    }
+}
+
+document.getElementById("login-form").addEventListener("submit", function(e) {
+    e.preventDefault();
+    fetch("login.php", {
+        method: "POST",
+        body: new FormData(this)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById("login-msg").innerHTML = "Login successful! Redirecting...";
+            resetLoginForm(); // ✅ clear fields right after login
+            showPanel("movies");
+        } else {
+            document.getElementById("login-msg").innerHTML = data.message;
+        }
+    });
+});
+
+function logout() {
+    fetch("logout.php")
+        .then(() => {
+            resetLoginForm(); // ✅ also clear on logout
+            showPanel('login');
+        });
+}
+
+// Background Slider Animation
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.bg-slide');
+        
+        function nextSlide() {
+            slides[currentSlide].classList.remove('active-slide');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active-slide');
+        }
+
+        // Show first slide
+        slides[0].classList.add('active-slide');
+        
+        // Change slide every 5 seconds
+        setInterval(nextSlide, 5000);
+
+    // STUDENT DISCOUNT - show upload UI & preview
+    (function(){
+        const sdCheckbox = document.getElementById('student-discount-checkbox');
+        const uploadSection = document.getElementById('student-upload-section');
+        const uploadInput = document.getElementById('student-id-upload');
+        const uploadPreview = document.getElementById('student-upload-preview');
+        const paymentForm = document.getElementById('payment-form');
+        const paymentMsg = document.getElementById('payment-msg');
+
+        if (sdCheckbox) {
+            sdCheckbox.addEventListener('change', () => {
+                if (sdCheckbox.checked) uploadSection.classList.remove('hidden');
+                else uploadSection.classList.add('hidden');
+            });
+        }
+
+        if (uploadInput) {
+            uploadInput.addEventListener('change', (e) => {
+                const file = e.target.files && e.target.files[0];
+                uploadPreview.innerHTML = '';
+                if (!file) return;
+                const img = document.createElement('img');
+                img.style.maxWidth = '220px';
+                img.style.maxHeight = '140px';
+                img.style.borderRadius = '6px';
+                img.src = URL.createObjectURL(file);
+                uploadPreview.appendChild(img);
+            });
+        }
+
+        // submit payment form via fetch; returns JSON { success, ticket_url, message }
+        if (paymentForm) {
+            paymentForm.addEventListener('submit', function(e){
+                e.preventDefault();
+                paymentMsg.textContent = 'Processing...';
+                const form = new FormData(this);
+                fetch('process_payment.php', { method: 'POST', body: form })
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.success) {
+                            paymentMsg.textContent = 'Payment saved. Opening ticket...';
+                            if (data.ticket_url) window.open(data.ticket_url, '_blank');
+                        } else {
+                            paymentMsg.textContent = data.message || 'Error processing payment';
+                        }
+                    }).catch(() => {
+                        paymentMsg.textContent = 'Network error';
+                    });
+            });
+        }
+    })();
+    </script>
+<div class="nav-backdrop" onclick="closeNav()"></div>
+<script src="app.js"></script>
+</body>
+</html>

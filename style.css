@@ -1,0 +1,246 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(120deg,#242872 0%, #3940c2 50%, #ac2b53 100%);
+    color: #f5f6fa;
+    background-attachment: fixed;
+}
+
+
+nav {
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+    margin-bottom: 32px;
+}
+
+nav button {
+    background: #35355e;
+    color: #f5f6fa;
+    font-size: 16px;
+    padding: 12px 32px;
+    border-radius: 8px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+nav button.active, nav button:hover {
+    background: #f1c40f;
+    color: #23243a;
+}
+
+#movies-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    align-items: stretch;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 900px;
+}
+
+.movie-card {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+    margin: 0;
+    padding: 32px;
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
+    width: 100%;
+    min-width: 0;
+    border: 2px solid #3498db;
+}
+
+.movie-card img {
+    width: 160px;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 0 8px #181824;
+    flex-shrink: 0;
+}
+
+.movie-card-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.movie-card h2 {
+    color: #f1c40f;
+    margin-bottom: 12px;
+    font-size: 2rem;
+}
+
+.movie-card p {
+    color: #c33764;
+    font-size: 18px;
+    margin-bottom: 18px;
+}
+
+.movie-card ul {
+    color: #23243a;
+    font-size: 16px;
+    margin-bottom: 18px;
+}
+
+.movie-card button {
+    width: 100%;
+    margin-top: 18px;
+    padding: 14px 0;
+    font-size: 18px;
+    background: #f1c40f;
+    color: #23243a;
+    border-radius: 8px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.movie-card button:hover {
+    background: #ffe066;
+}
+
+section {
+    margin-top: 20px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Stack login/register form elements vertically */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+form input, form button {
+    width: 100%;
+    font-size: 18px;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #35355e;
+    background: #23243a;
+    color: #f5f6fa;
+}
+
+form button {
+    background: #f1c40f;
+    color: #23243a;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+/* Social buttons row */
+.social-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    justify-content: flex-start;
+}
+
+.fa {
+    padding: 10px 0;
+    font-size: 18px;
+    width: 120px;
+    text-align: center;
+    border-radius: 6px;
+    margin: 0;
+    display: inline-block;
+}
+
+.fa:hover {
+  opacity: 0.8;
+}
+.fa-facebook {
+  background: #3B5998;
+  color: white;
+}
+.fa-google {
+  background: #db4437;
+  color: white;
+}
+.fa-instagram {
+  background: #e4405f;
+  color: white;
+}
+.gender-group {
+  margin-bottom: 1px;
+}
+p {
+  color: rgb(255, 145, 0);
+  font-size: 20px;
+}
+#welcome-msg {
+  color: rgb(9, 255, 0);
+  font-size: 30px;
+}
+h2, h3 {
+  color: #ff6600;
+  font-weight: bold;
+  font-size: 28px;
+}
+b {
+  color: #ff6600;
+  font-weight: bold;
+  font-size: larger;
+}
+#welcome-panel, #about-us {
+  animation: fadeIn 0.7s;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.seat {
+  display: inline-block;
+  width: 36px;
+  height: 36px;
+  margin: 2px;
+  background: #bdc3c7;
+  border-radius: 5px;
+  text-align: center;
+  line-height: 36px;
+  cursor: pointer;
+}
+.seat.selected {
+  background: #3498db;
+  color: #fff;
+}
+.seat.booked {
+  background: #e74c3c !important;
+  color: #fff;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.food-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.food-row span {
+  flex: 1;
+}
+.food-row button {
+  width: 36px;
+  height: 36px;
+  font-size: 20px;
+}
+.summary {
+  background: #1a1d36;
+  color: #f5f6fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 20px;
+}

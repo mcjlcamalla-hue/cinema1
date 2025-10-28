@@ -1,0 +1,11 @@
+Array
+(
+    [movie] => A Minecraft Movie
+    [cinema] => Standard Cinema
+    [showtime] => 10:00 AM
+    [seats] => Array
+        (
+            [0] => S8
+        )
+
+)
