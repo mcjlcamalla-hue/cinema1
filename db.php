@@ -6,9 +6,9 @@ $db   = "cinemadb";    // your database name
 
 // ✅ Avoid redefining constants
 if (!defined('SMTP_HOST')) define('SMTP_HOST', 'smtp.gmail.com');
-if (!defined('SMTP_USER')) define('SMTP_USER', 'mcjlcamalla@tip.edu.ph');
-if (!defined('SMTP_PASS')) define('SMTP_PASS', 'rbuw idnr riwr ebuu');
-if (!defined('FROM_EMAIL')) define('FROM_EMAIL', 'mcjlcamalla@tip.edu.ph');
+if (!defined('SMTP_USER')) define('SMTP_USER', '');
+if (!defined('SMTP_PASS')) define('SMTP_PASS', '');
+if (!defined('FROM_EMAIL')) define('FROM_EMAIL', '');
 if (!defined('FROM_NAME')) define('FROM_NAME', 'Cinema Booking');
 
 // ✅ Create DB connection
